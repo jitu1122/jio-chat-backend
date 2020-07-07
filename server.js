@@ -1,9 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-// const InitiateMongoServer = require("./db");
+const InitiateMongoServer = require("./db");
 const user = require("./routes/user"); //new addition
 var cors = require('cors');
-// const SetChatUsers = require("./set-chat-users");
+const SetChatUsers = require("./set-chat-users");
 
 // Initiate Mongo Server
 
