@@ -85,4 +85,6 @@ InitiateMongoServer().then(
     }
 );
 
+
+SetChatUsers();
 module.exports = http;
