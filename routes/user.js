@@ -3,7 +3,7 @@ const {check, validationResult} = require("express-validator/check");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
-const User = require("../model/User");
+const UserModel = require("../model/user");
 
 const SetChatUsers = require("../set-chat-users");
 
@@ -35,7 +35,7 @@ router.post(
             password
         } = req.body;
         try {
-            let user = await User.findOne({
+            let user = await UserModel.findOne({
                 username
             });
             if (user) {
@@ -44,7 +44,7 @@ router.post(
                 });
             }
 
-            user = new User({
+            user = new UserModel({
                 username,
                 fullname,
                 password
@@ -101,7 +101,7 @@ router.post(
 
         const {username, password, remember} = req.body;
         try {
-            let user = await User.findOne({
+            let user = await UserModel.findOne({
                 username
             });
             if (!user)
