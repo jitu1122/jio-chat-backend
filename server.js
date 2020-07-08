@@ -1,15 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const InitiateMongoServer = require("./db");
 const user = require("./routes/user"); //new addition
-var cors = require('cors');
-const SetChatUsers = require("./set-chat-users");
+const cors = require('cors');
+const User = require("./model/user");
+const chatUsers = require('./model/chatUsers');
+const getUserFromToken = require('./auth');
+const InitiateMongoServer = require("./db");
 
-// Initiate Mongo Server
 
 const app = express();
 
-// PORT
 const PORT = process.env.PORT || 4000;
 
 app.use(bodyParser.json());
@@ -19,14 +19,17 @@ app.use(cors());
 app.get("/", (req, res) => {
     res.json({message: "All set!!!!!"});
 });
-app.use("/user", user);
-var http = require('http').createServer(app);
-var io = require('socket.io')(http);
-const chatUsers = require('./model/chatUsers');
-const getUserFromToken = require('./auth');
-InitiateMongoServer().then(
-    ()=> {
 
+app.use("/user", user);
+
+
+var http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+
+
+InitiateMongoServer().then(
+    () => {
         io.on('connection', socket => {
             //Get the chatID of the user and join in a room of the same chatID
             console.log("new connnn");
@@ -47,7 +50,8 @@ InitiateMongoServer().then(
                 } catch (e) {
 
                 }
-                socket.leave(userId, ()=>{})
+                socket.leave(userId, () => {
+                })
             });
 
             socket.on('set_available', id => {
@@ -62,7 +66,8 @@ InitiateMongoServer().then(
 
             //Leave the room if the user closes the socket
             socket.on('users', () => {
-                socket.leave(userId, ()=>{})
+                socket.leave(userId, () => {
+                })
             });
 
             //Send message to only a particular user
@@ -79,15 +84,28 @@ InitiateMongoServer().then(
                 })
             })
         });
-        http.listen(PORT, (req, res) => {
-            console.log(`Server Started at PORT ${PORT}`);
-        });
     }
 );
 
+const SetChatUsers = async () => {
+    let users = await User.find({});
+    chatUsers.data = {};
+    users.map((r) => {
+        if (!chatUsers.data.hasOwnProperty(r.id)) {
+            chatUsers.data[r.id] = {name: r.fullname, online: false}
+        }
+    });
+    try {
+        io.emit('user_reset');
+    } catch (e) {
+
+    }
+};
 
 SetChatUsers();
+
 http.listen(PORT, (req, res) => {
-            console.log(`Server Started at PORT ${PORT}`);
-        });
+    console.log(`Server Started at PORT ${PORT}`);
+});
+
 module.exports = http;

@@ -5,9 +5,6 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const UserModel = require("../model/user");
 
-const SetChatUsers = require("../set-chat-users");
-
-
 router.post(
     "/signup",
     [
@@ -60,7 +57,6 @@ router.post(
                     id: user.id
                 }
             };
-            await SetChatUsers();
             jwt.sign(
                 payload,
                 "randomString", {
