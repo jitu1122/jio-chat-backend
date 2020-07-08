@@ -6,7 +6,8 @@ const MONGOURI = "mongodb+srv://jitu:test@cluster0.b6doz.mongodb.net/jio-test?re
 const InitiateMongoServer = async () => {
     try {
         await mongoose.connect(MONGOURI, {
-            useNewUrlParser: true
+            useNewUrlParser: true,
+            useUnifiedTopology: true
         });
         console.log("Successfully Connected to Database !!");
     } catch (e) {
