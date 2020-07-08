@@ -38,6 +38,7 @@ InitiateMongoServer().then(
             try {
                 chatUsers.data[userId].online = true;
                 console.log(chatUsers.data[userId].name + ' is connected.');
+                io.emit('user_status', {name: chatUsers.data[userId].name, status: 'in'});
                 io.emit('chat-users', chatUsers.data);
             } catch (e) {
                 SetChatUsers();
@@ -48,6 +49,7 @@ InitiateMongoServer().then(
                 console.log(chatUsers.data[userId].name + ' is disconnected.');
                 try {
                     chatUsers.data[userId].online = false;
+                    io.emit('user_status', {name: chatUsers.data[userId].name, status: 'out'});
                     io.emit('chat-users', chatUsers.data);
                 } catch (e) {
 
