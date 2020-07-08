@@ -32,18 +32,20 @@ InitiateMongoServer().then(
     () => {
         io.on('connection', socket => {
             //Get the chatID of the user and join in a room of the same chatID
-            console.log("new connnn");
+            console.log("new con");
             var userId = getUserFromToken(socket.handshake.query.token);
             socket.join(userId);
             try {
                 chatUsers.data[userId].online = true;
+                console.log(chatUsers.data[userId].name + ' is connected.');
+                io.emit('chat-users', chatUsers.data);
             } catch (e) {
                 SetChatUsers();
             }
 
             //Leave the room if the user closes the socket
             socket.on('disconnect', () => {
-                console.log('disconnected');
+                console.log(chatUsers.data[userId].name + ' is disconnected.');
                 try {
                     chatUsers.data[userId].online = false;
                     io.emit('chat-users', chatUsers.data);
